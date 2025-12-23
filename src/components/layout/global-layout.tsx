@@ -10,11 +10,11 @@ export default function GlobalLayout() {
         <div className="m-auto flex h-full w-full max-w-175 justify-between px-4">
           <Link to="/" className="flex items-center gap-2">
             <img
-              className="h-5"
+              className="h-6"
               src={img}
-              alt="한입 로고의 로고, 메시지 말풍선을 형상화한 모양"
+              alt="스파게티 로고, 포크로 스파게티를 뜬 모양"
             />
-            <div className="font-bold">한입 로그</div>
+            <div className="font-bold">스파게티</div>
           </Link>
           <div className="flex items-center gap-5">
             <div className="hover:bg-muted cursor-pointer rounded-full p-2">
