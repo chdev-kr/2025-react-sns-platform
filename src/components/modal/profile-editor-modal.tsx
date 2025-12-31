@@ -7,6 +7,14 @@ import defaultAvatar from "@/assets/default-avatar.jpg";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useProfileEditorModal } from "@/store/profile-editor-modal";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { toast } from "sonner";
+import { useUpdateProfile } from "@/hooks/mutations/profile/use-update-profile";
+
+type Image = {
+  file: File;
+  previewUrl: string;
+};
 
 export default function ProfileEditorModal() {
   const session = useSession();
@@ -17,10 +25,69 @@ export default function ProfileEditorModal() {
   } = useProfileData(session?.user.id);
 
   const store = useProfileEditorModal();
+
   const {
     isOpen,
     actions: { close },
   } = store;
+
+  const { mutate: updateProfile, isPending: isUpdateProfilePending } =
+    useUpdateProfile({
+      onSuccess: () => {
+        close();
+      },
+      onError: (error) => {
+        toast.error("프로필 수정에 실패했습니다.", {
+          position: "top-center",
+        });
+      },
+    });
+
+  const [avatarImage, setAvatarImage] = useState<Image | null>(null);
+  const [nickname, setNickname] = useState("");
+  const [bio, setBio] = useState("");
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      if (avatarImage) {
+        URL.revokeObjectURL(avatarImage.previewUrl);
+      }
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (profile && isOpen) {
+      setNickname(profile.nickname);
+      setBio(profile.bio);
+      setAvatarImage(null);
+    }
+  }, [profile, isOpen]);
+
+  const handleUpdateClick = () => {
+    if (nickname.trim() === "") return;
+    updateProfile({
+      userId: session!.user.id,
+      nickname,
+      bio,
+      avatarImageFile: avatarImage?.file,
+    });
+  };
+
+  const handleSelectImage = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const file = e.target.files[0];
+
+    if (avatarImage) {
+      URL.revokeObjectURL(avatarImage.previewUrl);
+    }
+
+    setAvatarImage({
+      file,
+      previewUrl: URL.createObjectURL(file),
+    });
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={close}>
@@ -32,20 +99,42 @@ export default function ProfileEditorModal() {
           <>
             <div className="flex flex-col gap-2">
               <div className="text-muted-foreground">프로필 이미지</div>
+              <input
+                disabled={isUpdateProfilePending}
+                onChange={handleSelectImage}
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+              />
               <img
-                src={profile.avatar_url || defaultAvatar}
+                onClick={() => fileInputRef.current?.click()}
+                src={
+                  avatarImage?.previewUrl || profile.avatar_url || defaultAvatar
+                }
                 className="h-20 w-20 cursor-pointer rounded-full object-cover"
               />
             </div>
             <div className="flex flex-col gap-2">
               <div className="text-muted-foreground"> 닉네임 </div>
-              <Input />
+              <Input
+                disabled={isUpdateProfilePending}
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+              />
             </div>
             <div className="flex flex-col gap-2">
               <div className="text-muted-foreground"> 소개 </div>
-              <Input />
+              <Input value={bio} onChange={(e) => setBio(e.target.value)} />
             </div>
-            <Button className="cursor-pointer"> 수정하기 </Button>
+
+            <Button
+              disabled={isUpdateProfilePending}
+              onClick={handleUpdateClick}
+              className="cursor-pointer"
+            >
+              수정하기
+            </Button>
           </>
         )}
       </DialogContent>
