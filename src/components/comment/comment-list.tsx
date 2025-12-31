@@ -1,11 +1,23 @@
 import CommentItem from "@/components/comment/comment-item";
+import { useCommentData } from "@/hooks/queries/use-comments-data";
+import Fallback from "@/components/fallback";
+import Loader from "@/components/loader";
 
-export default function CommentList() {
+export default function CommentList({ postId }: { postId: number }) {
+  const {
+    data: comments,
+    error: fetchCommentsError,
+    isPending: isFetchCommentsPending,
+  } = useCommentData(postId);
+
+  if (fetchCommentsError) return <Fallback />;
+  if (isFetchCommentsPending) return <Loader />;
+
   return (
     <div className="flex flex-col gap-5">
-      <CommentItem />
-      <CommentItem />
-      <CommentItem />
+      {comments.map((comment) => (
+        <CommentItem key={comment.id} {...comment} />
+      ))}
     </div>
   );
 }

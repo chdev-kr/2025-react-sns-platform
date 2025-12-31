@@ -16,7 +16,7 @@ export default function PostDetailPage() {
       <PostItem postId={Number(postId)} type={"DETAIL"} />
       <div className="text-cl font-bold"> 댓글 </div>
       <CommentEditor postId={Number(postId)} />
-      <CommentList />
+      <CommentList postId={Number(postId)} />
     </div>
   );
 }
