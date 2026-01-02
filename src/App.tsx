@@ -5,15 +5,21 @@ import RootRoute from "@/root-route";
 import IntroPage from "@/components/intro-page";
 
 export default function App() {
-  const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(() => {
+    const hasSeenIntro = localStorage.getItem("hasSeenIntro");
+    return hasSeenIntro !== "true";
+  });
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowIntro(false);
-    }, 2500);
+    if (showIntro) {
+      const timer = setTimeout(() => {
+        setShowIntro(false);
+        localStorage.setItem("hasSeenIntro", "true");
+      }, 2500);
 
-    return () => clearTimeout(timer);
-  }, []);
+      return () => clearTimeout(timer);
+    }
+  }, [showIntro]);
 
   return (
     <SessionProvider showIntro={showIntro}>
