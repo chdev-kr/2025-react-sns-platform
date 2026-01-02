@@ -104,6 +104,7 @@ export default function CommentEditor(props: Props) {
               취소
             </Button>
           ))}
+
         <Button disabled={isPending} onClick={handleSubmitClick}>
           작성
         </Button>

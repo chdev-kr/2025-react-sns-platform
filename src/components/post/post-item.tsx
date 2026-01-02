@@ -155,7 +155,7 @@ export default function PostItem({
           <Link to={`/post/${post.id}`}>
             <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border-1 p-2 px-4 text-sm">
               <MessageCircle className="h-4 w-4" />
-              <span>댓글 달기</span>
+              <span>댓글 {post.comment_count}</span>
             </div>
           </Link>
         )}
