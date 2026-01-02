@@ -76,6 +76,11 @@ export default function CommentEditor(props: Props) {
         parentCommentId: props.parentCommentId,
         rootCommentId: props.rootCommentId,
       });
+    } else {
+      updateComment({
+        id: props.commentId,
+        content,
+      });
     }
   };
 
