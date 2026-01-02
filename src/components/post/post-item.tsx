@@ -6,6 +6,9 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+  type CarouselApi,
 } from "@/components/ui/carousel";
 import { formatTimeAgo } from "@/lib/time";
 import EditPostButton from "@/components/post/edit-post-button";
@@ -16,6 +19,7 @@ import Loader from "@/components/loader";
 import Fallback from "@/components/fallback";
 import LikePostButton from "@/components/post/like-post-button";
 import { Link } from "react-router";
+import { useState } from "react";
 
 export default function PostItem({
   postId,
@@ -26,6 +30,7 @@ export default function PostItem({
 }) {
   const session = useSession();
   const userId = session?.user.id;
+  const [api, setApi] = useState<CarouselApi>();
 
   const {
     data: post,
@@ -89,21 +94,50 @@ export default function PostItem({
         ) : (
           <div className="break-words whitespace-pre-wrap">{post.content}</div>
         )}
-        {/* 2-2. 이미지 캐러셀 */}
-        <Carousel>
-          <CarouselContent>
-            {post.image_urls?.map((url, index) => (
-              <CarouselItem className={`basis-3/5`} key={index}>
-                <div className="overflow-hidden rounded-xl">
-                  <img
-                    src={url}
-                    className="h-full max-h-[350px] w-full object-cover"
-                  />
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-        </Carousel>
+        {/* 2-2. 이미지 */}
+        {post.image_urls && post.image_urls.length === 1 ? (
+          // 이미지 1개
+          <div className="mx-auto aspect-[5/4] w-full overflow-hidden rounded-xl">
+            <img
+              src={post.image_urls[0]}
+              className="h-full w-full object-cover"
+              alt="게시물 이미지"
+            />
+          </div>
+        ) : post.image_urls && post.image_urls.length > 1 ? (
+          // 이미지 2개 이상
+          <Carousel className="group mx-auto" setApi={setApi}>
+            <CarouselContent>
+              {post.image_urls.map((url, index) => (
+                <CarouselItem className="basis-full" key={index}>
+                  <div
+                    className="relative aspect-[5/4] w-full cursor-pointer overflow-hidden rounded-xl"
+                    onClick={(e) => {
+                      if (!api) return;
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const clickX = e.clientX - rect.left;
+                      const isLeftHalf = clickX < rect.width / 2;
+
+                      if (isLeftHalf) {
+                        api.scrollPrev();
+                      } else {
+                        api.scrollNext();
+                      }
+                    }}
+                  >
+                    <img
+                      src={url}
+                      className="h-full w-full object-cover"
+                      alt={`게시물 이미지 ${index + 1}`}
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="left-2 opacity-0 transition-opacity group-hover:opacity-100" />
+            <CarouselNext className="right-2 opacity-0 transition-opacity group-hover:opacity-100" />
+          </Carousel>
+        ) : null}
       </div>
 
       {/* 3. 좋아요, 댓글 버튼 */}
