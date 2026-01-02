@@ -4,7 +4,13 @@ import supabase from "@/lib/supabase";
 import { useIsSessionLoaded, useSession, useSetSession } from "@/store/session";
 import { useEffect, type ReactNode } from "react";
 
-export default function SessionProvider({ children }: { children: ReactNode }) {
+export default function SessionProvider({
+  children,
+  showIntro = false
+}: {
+  children: ReactNode;
+  showIntro?: boolean;
+}) {
   const session = useSession();
   const setSession = useSetSession();
   const isSessionLoaded = useIsSessionLoaded();
@@ -20,6 +26,9 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
       setSession(session);
     });
   }, []);
+
+  // 인트로 표시 중에는 GlobalLoader를 표시하지 않음
+  if (showIntro) return children;
 
   if (!isSessionLoaded) return <GlobalLoader />;
   if (isProfileLoading) return <GlobalLoader />;
