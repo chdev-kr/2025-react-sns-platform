@@ -100,7 +100,7 @@ export default function SignInPage() {
         <Link className="text-muted-foreground hover:underline" to={"/sign-up"}>
           계정이 없으시다면?
         </Link>
-        <div> | </div>
+        <div className="text-muted-foreground"> | </div>
         <Link
           className="text-muted-foreground hover:underline"
           to={"/forget-password"}
