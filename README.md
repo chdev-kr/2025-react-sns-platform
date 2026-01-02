@@ -1,6 +1,6 @@
 # Spaghetti - 엮이고 이어지는 공간
 
-![Spaghetti SNS Platform](./onebite-log/public/thumbnail.jpg)
+![Spaghetti SNS Platform](./public/thumbnail.jpg)
 
 > **Spaghetti(스파게티)**는 사람들이 엮이고 이어지는 SNS 플랫폼입니다.  
 > 스파게티 면처럼 서로가 연결되어 새로운 이야기를 만드는 공간입니다.
