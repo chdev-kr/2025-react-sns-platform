@@ -146,8 +146,6 @@ export default function PostItem({
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="left-2 bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/50" />
-              <CarouselNext className="right-2 bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/50" />
             </Carousel>
             {/* 인디케이터 */}
             <div className="flex justify-center gap-1.5">
@@ -155,7 +153,9 @@ export default function PostItem({
                 <div
                   key={index}
                   className={`h-1.5 w-1.5 rounded-full transition-all ${
-                    index === currentImageIndex ? "w-2 bg-foreground" : "bg-muted-foreground"
+                    index === currentImageIndex
+                      ? "bg-foreground w-2"
+                      : "bg-muted-foreground"
                   }`}
                 />
               ))}
