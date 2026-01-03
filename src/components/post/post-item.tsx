@@ -19,7 +19,7 @@ import Loader from "@/components/loader";
 import Fallback from "@/components/fallback";
 import LikePostButton from "@/components/post/like-post-button";
 import { Link } from "react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function PostItem({
   postId,
@@ -31,6 +31,7 @@ export default function PostItem({
   const session = useSession();
   const userId = session?.user.id;
   const [api, setApi] = useState<CarouselApi>();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const {
     data: post,
@@ -40,6 +41,16 @@ export default function PostItem({
     postId,
     type,
   });
+
+  useEffect(() => {
+    if (!api) return;
+
+    setCurrentImageIndex(api.selectedScrollSnap());
+
+    api.on("select", () => {
+      setCurrentImageIndex(api.selectedScrollSnap());
+    });
+  }, [api]);
 
   if (isPending) return <Loader />;
   if (error) return <Fallback />;
@@ -106,37 +117,50 @@ export default function PostItem({
           </div>
         ) : post.image_urls && post.image_urls.length > 1 ? (
           // 이미지 2개 이상
-          <Carousel className="group mx-auto" setApi={setApi}>
-            <CarouselContent>
-              {post.image_urls.map((url, index) => (
-                <CarouselItem className="basis-full" key={index}>
-                  <div
-                    className="relative aspect-[5/4] w-full cursor-pointer overflow-hidden rounded-xl"
-                    onClick={(e) => {
-                      if (!api) return;
-                      const rect = e.currentTarget.getBoundingClientRect();
-                      const clickX = e.clientX - rect.left;
-                      const isLeftHalf = clickX < rect.width / 2;
+          <div className="flex flex-col gap-3">
+            <Carousel className="group mx-auto" setApi={setApi}>
+              <CarouselContent>
+                {post.image_urls.map((url, index) => (
+                  <CarouselItem className="basis-full" key={index}>
+                    <div
+                      className="relative aspect-[5/4] w-full cursor-pointer overflow-hidden rounded-xl"
+                      onClick={(e) => {
+                        if (!api) return;
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const clickX = e.clientX - rect.left;
+                        const isLeftHalf = clickX < rect.width / 2;
 
-                      if (isLeftHalf) {
-                        api.scrollPrev();
-                      } else {
-                        api.scrollNext();
-                      }
-                    }}
-                  >
-                    <img
-                      src={url}
-                      className="h-full w-full object-cover"
-                      alt={`게시물 이미지 ${index + 1}`}
-                    />
-                  </div>
-                </CarouselItem>
+                        if (isLeftHalf) {
+                          api.scrollPrev();
+                        } else {
+                          api.scrollNext();
+                        }
+                      }}
+                    >
+                      <img
+                        src={url}
+                        className="h-full w-full object-cover"
+                        alt={`게시물 이미지 ${index + 1}`}
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-2 bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/50" />
+              <CarouselNext className="right-2 bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/50" />
+            </Carousel>
+            {/* 인디케이터 */}
+            <div className="flex justify-center gap-1.5">
+              {post.image_urls.map((_, index) => (
+                <div
+                  key={index}
+                  className={`h-1.5 w-1.5 rounded-full transition-all ${
+                    index === currentImageIndex ? "w-2 bg-foreground" : "bg-muted-foreground"
+                  }`}
+                />
               ))}
-            </CarouselContent>
-            <CarouselPrevious className="left-2 opacity-0 transition-opacity group-hover:opacity-100" />
-            <CarouselNext className="right-2 opacity-0 transition-opacity group-hover:opacity-100" />
-          </Carousel>
+            </div>
+          </div>
         ) : null}
       </div>
 
