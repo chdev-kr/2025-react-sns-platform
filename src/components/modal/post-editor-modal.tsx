@@ -198,26 +198,28 @@ export default function PostEditorModal() {
             </CarouselContent>
           </Carousel>
         )}
-        {postEditorModal.isOpen && postEditorModal.type === "CREATE" && (
+        <div className="flex flex-col gap-2">
+          {postEditorModal.isOpen && postEditorModal.type === "CREATE" && (
+            <Button
+              onClick={() => {
+                fileInputRef.current?.click();
+              }}
+              disabled={isPending}
+              variant={"outline"}
+              className="cursor-pointer"
+            >
+              <ImageIcon />
+              이미지 추가
+            </Button>
+          )}
           <Button
-            onClick={() => {
-              fileInputRef.current?.click();
-            }}
             disabled={isPending}
-            variant={"outline"}
+            onClick={handleSavePostClick}
             className="cursor-pointer"
           >
-            <ImageIcon />
-            이미지 추가
+            저장
           </Button>
-        )}
-        <Button
-          disabled={isPending}
-          onClick={handleSavePostClick}
-          className="cursor-pointer"
-        >
-          저장
-        </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
