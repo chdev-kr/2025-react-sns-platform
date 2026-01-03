@@ -20,6 +20,7 @@ import Fallback from "@/components/fallback";
 import LikePostButton from "@/components/post/like-post-button";
 import { Link } from "react-router";
 import { useState, useEffect } from "react";
+import ImageSkeleton from "@/components/post/image-skeleton";
 
 export default function PostItem({
   postId,
@@ -109,11 +110,7 @@ export default function PostItem({
         {post.image_urls && post.image_urls.length === 1 ? (
           // 이미지 1개
           <div className="mx-auto aspect-[5/4] w-full overflow-hidden rounded-xl">
-            <img
-              src={post.image_urls[0]}
-              className="h-full w-full object-cover"
-              alt="게시물 이미지"
-            />
+            <ImageSkeleton src={post.image_urls[0]} alt="게시물 이미지" />
           </div>
         ) : post.image_urls && post.image_urls.length > 1 ? (
           // 이미지 2개 이상
@@ -137,11 +134,7 @@ export default function PostItem({
                         }
                       }}
                     >
-                      <img
-                        src={url}
-                        className="h-full w-full object-cover"
-                        alt={`게시물 이미지 ${index + 1}`}
-                      />
+                      <ImageSkeleton src={url} alt={`게시물 이미지 ${index + 1}`} />
                     </div>
                   </CarouselItem>
                 ))}
