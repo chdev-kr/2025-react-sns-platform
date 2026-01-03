@@ -1,5 +1,4 @@
 import { Link, Outlet } from "react-router";
-import img from "@/assets/logo.png";
 import defaultAvatar from "@/assets/default-avatar.jpg";
 import { SunIcon } from "lucide-react";
 import ProfileButton from "./header/profile-button";
@@ -12,8 +11,8 @@ export default function GlobalLayout() {
         <div className="m-auto flex h-full w-full max-w-175 justify-between px-4">
           <Link to="/" className="flex items-center gap-2">
             <img
-              className="h-6"
-              src={img}
+              className="h-8"
+              src="/logo-with-white.png"
               alt="스파게티 로고, 포크로 스파게티를 뜬 모양"
             />
             <div className="font-bold">스파게티</div>
