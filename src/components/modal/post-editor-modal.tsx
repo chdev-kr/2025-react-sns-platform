@@ -141,14 +141,14 @@ export default function PostEditorModal() {
 
   return (
     <Dialog open={postEditorModal.isOpen} onOpenChange={handleCloseModal}>
-      <DialogContent className="max-h-[90vh]">
+      <DialogContent className="max-h-[90vh] min-h-[40vh]">
         <DialogTitle>포스트 작성</DialogTitle>
         <textarea
           disabled={isPending}
           ref={textareaRef}
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className="max-h-125 min-h-25 focus:outline-none"
+          className="max-h-150 min-h-40 focus:outline-none"
           placeholder="무슨 일이 있었나요?"
         />
         <input
