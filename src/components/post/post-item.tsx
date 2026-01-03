@@ -58,7 +58,7 @@ export default function PostItem({
             <img
               src={post.author.avatar_url || defaultAvatar}
               alt={`${post.author.nickname}의 프로필 이미지`}
-              className="h-10 w-10"
+              className="h-10 w-10 rounded-full object-cover"
             />
           </Link>
           <div>
