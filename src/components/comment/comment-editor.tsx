@@ -93,7 +93,7 @@ export default function CommentEditor(props: Props) {
         value={content}
         onChange={(e) => setContent(e.target.value)}
       />
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
         {props.type === "EDIT" ||
           (props.type === "REPLY" && (
             <Button
