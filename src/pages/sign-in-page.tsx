@@ -59,7 +59,7 @@ export default function SignInPage() {
   const isPending = isSignInWithPasswordPending || isSignInWithOAuthPending;
 
   return (
-    <div className="flex flex-col gap-8 pt-5">
+    <div className="mx-auto my-auto flex w-full max-w-md flex-col gap-8 pt-10">
       <div className="sr-only text-xl font-bold">로그인</div>
       <img
         src="/logo.png"
@@ -91,7 +91,9 @@ export default function SignInPage() {
             disabled={isPending}
             onClick={handleSubmit}
             className="w-full py-6"
-          ></Button>
+          >
+            로그인
+          </Button>
         </div>
       </form>
       <div className="flex justify-center gap-2">
