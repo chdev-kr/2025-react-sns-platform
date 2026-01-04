@@ -8,11 +8,17 @@ export default function ImageSkeleton({
   alt: string;
 }) {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   return (
     <div className="relative h-full w-full">
-      {!isLoaded && (
+      {!isLoaded && !hasError && (
         <div className="bg-muted absolute inset-0 animate-pulse" />
+      )}
+      {hasError && (
+        <div className="bg-muted absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">
+          이미지 로드 실패
+        </div>
       )}
       <img
         src={src}
@@ -21,6 +27,7 @@ export default function ImageSkeleton({
           isLoaded ? "opacity-100" : "opacity-0"
         }`}
         onLoad={() => setIsLoaded(true)}
+        onError={() => setHasError(true)}
       />
     </div>
   );

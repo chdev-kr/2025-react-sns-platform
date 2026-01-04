@@ -119,6 +119,17 @@ export default function PostEditorModal() {
       const files = Array.from(e.target.files);
 
       files.forEach((file) => {
+        // HEIC 파일 체크
+        const isHEIC = file.name.toLowerCase().endsWith('.heic') ||
+                       file.name.toLowerCase().endsWith('.heif');
+
+        if (isHEIC) {
+          toast.error("HEIC 형식은 지원하지 않습니다. JPG, PNG, WebP 파일을 사용해주세요.", {
+            position: "top-center",
+          });
+          return;
+        }
+
         setImages((prev) => [
           ...prev,
           { file, previewUrl: URL.createObjectURL(file) },
@@ -155,7 +166,7 @@ export default function PostEditorModal() {
           onChange={handleSelectImages}
           ref={fileInputRef}
           type="file"
-          accept="image/*"
+          accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
           multiple
           className="hidden"
         />
