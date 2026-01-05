@@ -56,16 +56,23 @@ export default function SignInPage() {
     signInWithOAuth("kakao");
   };
 
+  const handleGuestLogin = () => {
+    signInWithPassword({
+      email: "test@test.com",
+      password: "test1234",
+    });
+  };
   const isPending = isSignInWithPasswordPending || isSignInWithOAuthPending;
 
   return (
-    <div className="mx-auto my-auto flex w-full max-w-md flex-col gap-8 pt-10">
+    <div className="mx-auto my-auto flex w-full max-w-md flex-col gap-8 pt-6">
       <div className="sr-only text-xl font-bold">로그인</div>
       <img
         src="/logo.png"
         className="mx-auto w-70"
         alt="아스키코드로 표현한 스파게티 모습"
       />
+      <div className="mx-auto text-lg font-bold">엮이고, 이어지는 공간</div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col gap-3">
           <Input
@@ -93,6 +100,14 @@ export default function SignInPage() {
             className="w-full py-6"
           >
             로그인
+          </Button>
+          <Button
+            disabled={isPending}
+            onClick={handleGuestLogin}
+            variant="outline"
+            className="w-full py-6"
+          >
+            게스트로 접속
           </Button>
         </div>
       </form>
