@@ -109,7 +109,7 @@ export default function PostItem({
         {/* 2-2. 이미지 */}
         {post.image_urls && post.image_urls.length === 1 ? (
           // 이미지 1개
-          <div className="mx-auto aspect-[5/4] w-full overflow-hidden rounded-xl">
+          <div className="mx-auto aspect-[6/5] w-full overflow-hidden rounded-xl">
             <ImageSkeleton src={post.image_urls[0]} alt="게시물 이미지" />
           </div>
         ) : post.image_urls && post.image_urls.length > 1 ? (
@@ -120,7 +120,7 @@ export default function PostItem({
                 {post.image_urls.map((url, index) => (
                   <CarouselItem className="basis-full" key={index}>
                     <div
-                      className="relative aspect-[5/4] w-full cursor-pointer overflow-hidden rounded-xl"
+                      className="relative aspect-[6/5] w-full cursor-pointer overflow-hidden rounded-xl"
                       onClick={(e) => {
                         if (!api) return;
                         const rect = e.currentTarget.getBoundingClientRect();
@@ -134,7 +134,10 @@ export default function PostItem({
                         }
                       }}
                     >
-                      <ImageSkeleton src={url} alt={`게시물 이미지 ${index + 1}`} />
+                      <ImageSkeleton
+                        src={url}
+                        alt={`게시물 이미지 ${index + 1}`}
+                      />
                     </div>
                   </CarouselItem>
                 ))}
