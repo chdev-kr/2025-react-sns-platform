@@ -117,6 +117,7 @@
 - **sonner**: 토스트 알림
 - **immer**: 불변 상태 관리
 - **clsx / tailwind-merge**: 클래스명 조합
+- **browser-image-compression**: 이미지 압축
 
 ---
 
@@ -457,6 +458,64 @@ export async function createProfile(userId: string) {
 ### vercel을 활용하여 배포
 
 Spaghetti는 Vercel에 배포되어 있습니다.
+
+---
+
+## 트러블슈팅
+
+### 1. 이미지 업로드 실패 문제 (400 Bad Request)
+
+**문제 상황**
+
+- 이미지가 포함된 게시물 업로드 시 `400 Bad Request` 에러 발생
+- Supabase Storage에 대용량 이미지 업로드 실패(5MB 용량 제한)
+
+**원인 분석**
+
+- 모바일 카메라로 촬영한 고해상도 이미지는 5MB 이상
+- Supabase Storage의 업로드 크기 제한 초과
+
+**해결 방법**
+
+`browser-image-compression` 라이브러리를 사용하여 클라이언트 측에서 이미지를 자동 압축:
+
+```typescript
+// src/components/modal/post-editor-modal.tsx
+import imageCompression from "browser-image-compression";
+
+const handleSelectImages = async (e: ChangeEvent<HTMLInputElement>) => {
+  const files = Array.from(e.target.files);
+
+  for (const file of files) {
+    // 이미지 압축 옵션
+    const options = {
+      maxSizeMB: 1, // 최대 1MB
+      maxWidthOrHeight: 1920, // 최대 해상도
+      useWebWorker: true, // 백그라운드 처리
+      fileType: "image/jpeg", // JPEG 형식으로 변환
+    };
+
+    // 압축 실행
+    const compressedFile = await imageCompression(file, options);
+
+    setImages((prev) => [...prev, { file: compressedFile, previewUrl: ... }]);
+  }
+};
+```
+
+**결과**
+
+- 1MB 이하의 이미지는 압축하지 않고 원본 사용
+- 1MB 초과 이미지는 자동으로 압축하여 업로드 성공률 향상
+- Supabase Storage 용량 절약
+- Web Worker 사용으로 압축 중에도 UI 멈춤 현상 없음
+
+**라이브러리 선택 이유**
+
+- 간단한 API로 쉬운 구현
+- Web Worker 지원으로 UI 멈춤 없음
+- Canvas API 기반으로 모든 브라우저 지원
+- 경량 라이브러리 (~30KB)로 번들 크기 최소화
 
 ---
 
