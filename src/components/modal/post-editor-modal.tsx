@@ -13,6 +13,7 @@ import { useSession } from "@/store/session";
 import { ImageIcon, XIcon } from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { toast } from "sonner";
+import imageCompression from "browser-image-compression";
 
 type Image = {
   file: File;
@@ -30,8 +31,13 @@ export default function PostEditorModal() {
       postEditorModal.actions.close();
     },
     onError: (error) => {
+      console.error("포스트 생성 에러:", error);
       toast.error("포스트 생성에 실패했습니다", {
         position: "top-center",
+        description:
+          error instanceof Error
+            ? error.message
+            : "알 수 없는 오류가 발생했습니다",
       });
     },
   });
@@ -114,27 +120,52 @@ export default function PostEditorModal() {
     }
   };
 
-  const handleSelectImages = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleSelectImages = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
 
-      files.forEach((file) => {
-        // HEIC 파일 체크
-        const isHEIC = file.name.toLowerCase().endsWith('.heic') ||
-                       file.name.toLowerCase().endsWith('.heif');
+      for (const file of files) {
+        try {
+          // HEIC 파일 체크
+          const isHEIC =
+            file.name.toLowerCase().endsWith(".heic") ||
+            file.name.toLowerCase().endsWith(".heif");
 
-        if (isHEIC) {
-          toast.error("HEIC 형식은 지원하지 않습니다. JPG, PNG, WebP 파일을 사용해주세요.", {
+          if (isHEIC) {
+            toast.error(
+              "HEIC 형식은 지원하지 않습니다. JPG, PNG, WebP 파일을 사용해주세요.",
+              {
+                position: "top-center",
+              },
+            );
+            continue;
+          }
+
+          // 이미지 압축 옵션
+          const options = {
+            maxSizeMB: 1, // 최대 1MB
+            maxWidthOrHeight: 1920, // 최대 너비/높이
+            useWebWorker: true,
+            fileType: "image/jpeg",
+          };
+
+          // 이미지 압축
+          const compressedFile = await imageCompression(file, options);
+
+          setImages((prev) => [
+            ...prev,
+            {
+              file: compressedFile,
+              previewUrl: URL.createObjectURL(compressedFile),
+            },
+          ]);
+        } catch (error) {
+          console.error("이미지 압축 실패:", error);
+          toast.error("이미지 처리 중 오류가 발생했습니다.", {
             position: "top-center",
           });
-          return;
         }
-
-        setImages((prev) => [
-          ...prev,
-          { file, previewUrl: URL.createObjectURL(file) },
-        ]);
-      });
+      }
     }
 
     e.target.value = "";
