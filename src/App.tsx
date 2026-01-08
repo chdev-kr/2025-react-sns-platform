@@ -3,6 +3,7 @@ import ModalProvider from "@/provider/modal-provider";
 import SessionProvider from "@/provider/session-provider";
 import RootRoute from "@/root-route";
 import IntroPage from "@/components/intro-page";
+import { Analytics } from "@vercel/analytics/react";
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(() => {
@@ -25,6 +26,7 @@ export default function App() {
     <SessionProvider showIntro={showIntro}>
       <ModalProvider>
         {showIntro ? <IntroPage /> : <RootRoute />}
+        <Analytics />
       </ModalProvider>
     </SessionProvider>
   );
