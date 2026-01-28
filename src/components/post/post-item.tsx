@@ -99,7 +99,7 @@ export default function PostItem({
         {/* 2-1. 컨텐츠 */}
         {type === "FEED" ? (
           <Link to={`/post/${post.id}`}>
-            <div className="line-clamp-2 break-words whitespace-pre-wrap">
+            <div className="line-clamp-5 break-words whitespace-pre-wrap">
               {post.content}
             </div>
           </Link>
