@@ -115,7 +115,7 @@ export default function PostItem({
             <ImageSkeleton src={post.image_urls[0]} alt="게시물 이미지" />
             <button
               onClick={() => openImageViewer(post.image_urls!, 0)}
-              className="absolute top-2 right-2 rounded-full bg-black/50 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100"
+              className="absolute top-2 right-2 rounded-full bg-black/50 p-2 text-white opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100"
             >
               <Maximize2 className="h-4 w-4" />
             </button>
@@ -151,7 +151,7 @@ export default function PostItem({
                           e.stopPropagation();
                           openImageViewer(post.image_urls!, index);
                         }}
-                        className="absolute top-2 right-2 rounded-full bg-black/50 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                        className="absolute top-2 right-2 rounded-full bg-black/50 p-2 text-white opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100"
                       >
                         <Maximize2 className="h-4 w-4" />
                       </button>
