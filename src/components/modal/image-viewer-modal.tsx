@@ -31,11 +31,14 @@ export default function ImageViewerModal() {
 
   return (
     <Dialog open={store.isOpen} onOpenChange={store.actions.close}>
-      <DialogContent className="flex max-h-[90vh] max-w-[90vw] items-center justify-center border-none bg-transparent p-0 shadow-none">
+      <DialogContent
+        showCloseButton={false}
+        className="flex max-h-[90vh] max-w-[90vw] items-center justify-center border-none bg-transparent p-0 shadow-none"
+      >
         {/* 닫기 버튼 */}
         <button
           onClick={store.actions.close}
-          className="absolute top-4 right-4 z-50 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70"
+          className="fixed top-4 right-4 z-50 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70"
         >
           <XIcon className="h-6 w-6" />
         </button>
@@ -45,7 +48,7 @@ export default function ImageViewerModal() {
           <button
             onClick={store.actions.prev}
             disabled={!hasPrev}
-            className="absolute left-4 z-50 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70 disabled:cursor-not-allowed disabled:opacity-30"
+            className="fixed left-4 top-1/2 z-50 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70 disabled:cursor-not-allowed disabled:opacity-30"
           >
             <ChevronLeftIcon className="h-6 w-6" />
           </button>
@@ -79,7 +82,7 @@ export default function ImageViewerModal() {
           <button
             onClick={store.actions.next}
             disabled={!hasNext}
-            className="absolute right-4 z-50 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70 disabled:cursor-not-allowed disabled:opacity-30"
+            className="fixed right-4 top-1/2 z-50 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70 disabled:cursor-not-allowed disabled:opacity-30"
           >
             <ChevronRightIcon className="h-6 w-6" />
           </button>
