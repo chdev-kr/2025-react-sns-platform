@@ -1,4 +1,4 @@
-import { HeartIcon, MessageCircle } from "lucide-react";
+import { HeartIcon, Maximize2, MessageCircle } from "lucide-react";
 import type { Post } from "@/types";
 import defaultAvatar from "@/assets/default-avatar.jpg";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,7 @@ import LikePostButton from "@/components/post/like-post-button";
 import { Link } from "react-router";
 import { useState, useEffect } from "react";
 import ImageSkeleton from "@/components/post/image-skeleton";
+import { useOpenImageViewerModal } from "@/store/image-viewer-modal";
 
 export default function PostItem({
   postId,
@@ -33,6 +34,7 @@ export default function PostItem({
   const userId = session?.user.id;
   const [api, setApi] = useState<CarouselApi>();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const openImageViewer = useOpenImageViewerModal();
 
   const {
     data: post,
@@ -109,8 +111,14 @@ export default function PostItem({
         {/* 2-2. 이미지 */}
         {post.image_urls && post.image_urls.length === 1 ? (
           // 이미지 1개
-          <div className="mx-auto aspect-[6/5] w-full overflow-hidden rounded-xl">
+          <div className="group relative mx-auto aspect-[6/5] w-full overflow-hidden rounded-xl">
             <ImageSkeleton src={post.image_urls[0]} alt="게시물 이미지" />
+            <button
+              onClick={() => openImageViewer(post.image_urls!, 0)}
+              className="absolute top-2 right-2 rounded-full bg-black/50 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100"
+            >
+              <Maximize2 className="h-4 w-4" />
+            </button>
           </div>
         ) : post.image_urls && post.image_urls.length > 1 ? (
           // 이미지 2개 이상
@@ -120,7 +128,7 @@ export default function PostItem({
                 {post.image_urls.map((url, index) => (
                   <CarouselItem className="basis-full" key={index}>
                     <div
-                      className="relative aspect-[6/5] w-full cursor-pointer overflow-hidden rounded-xl"
+                      className="group relative aspect-[6/5] w-full cursor-pointer overflow-hidden rounded-xl"
                       onClick={(e) => {
                         if (!api) return;
                         const rect = e.currentTarget.getBoundingClientRect();
@@ -138,6 +146,15 @@ export default function PostItem({
                         src={url}
                         alt={`게시물 이미지 ${index + 1}`}
                       />
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openImageViewer(post.image_urls!, index);
+                        }}
+                        className="absolute top-2 right-2 rounded-full bg-black/50 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                      >
+                        <Maximize2 className="h-4 w-4" />
+                      </button>
                     </div>
                   </CarouselItem>
                 ))}
