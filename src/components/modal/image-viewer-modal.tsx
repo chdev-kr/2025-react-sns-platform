@@ -1,4 +1,4 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogOverlay, DialogPortal } from "@/components/ui/dialog";
 import { useImageViewerModal } from "@/store/image-viewer-modal";
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
 import { useEffect } from "react";
@@ -31,11 +31,10 @@ export default function ImageViewerModal() {
 
   return (
     <Dialog open={store.isOpen} onOpenChange={store.actions.close}>
-      <DialogContent
-        showCloseButton={false}
-        className="flex max-h-[90vh] max-w-[90vw] items-center justify-center border-none bg-transparent p-0 shadow-none"
-      >
-        {/* 닫기 버튼 */}
+      <DialogPortal>
+        <DialogOverlay className="z-30 bg-black/80" />
+
+        {/* 닫기 버튼 - DialogPortal 레벨에 배치 */}
         <button
           onClick={store.actions.close}
           className="fixed top-4 right-4 z-50 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70"
@@ -54,10 +53,41 @@ export default function ImageViewerModal() {
           </button>
         )}
 
-        {/* 이미지 */}
+        {/* 다음 버튼 */}
+        {showNavigation && (
+          <button
+            onClick={store.actions.next}
+            disabled={!hasNext}
+            className="fixed right-4 top-1/2 z-50 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70 disabled:cursor-not-allowed disabled:opacity-30"
+          >
+            <ChevronRightIcon className="h-6 w-6" />
+          </button>
+        )}
+
+        {/* 인디케이터 */}
+        {showNavigation && (
+          <div className="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 gap-1.5">
+            {store.imageUrls.map((_, index) => (
+              <div
+                key={index}
+                className={`h-2 w-2 rounded-full transition-all ${
+                  index === store.currentIndex
+                    ? "w-3 bg-white"
+                    : "bg-white/50"
+                }`}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* 이미지 - 중앙 배치 */}
         <div
-          className="relative cursor-pointer"
+          className="fixed inset-0 z-40 flex cursor-pointer items-center justify-center"
           onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              store.actions.close();
+              return;
+            }
             if (!showNavigation) return;
             const rect = e.currentTarget.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
@@ -76,34 +106,7 @@ export default function ImageViewerModal() {
             className="max-h-[90vh] max-w-[90vw] rounded-lg object-contain"
           />
         </div>
-
-        {/* 다음 버튼 */}
-        {showNavigation && (
-          <button
-            onClick={store.actions.next}
-            disabled={!hasNext}
-            className="fixed right-4 top-1/2 z-50 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70 disabled:cursor-not-allowed disabled:opacity-30"
-          >
-            <ChevronRightIcon className="h-6 w-6" />
-          </button>
-        )}
-
-        {/* 인디케이터 */}
-        {showNavigation && (
-          <div className="absolute bottom-4 flex gap-1.5">
-            {store.imageUrls.map((_, index) => (
-              <div
-                key={index}
-                className={`h-2 w-2 rounded-full transition-all ${
-                  index === store.currentIndex
-                    ? "w-3 bg-white"
-                    : "bg-white/50"
-                }`}
-              />
-            ))}
-          </div>
-        )}
-      </DialogContent>
+      </DialogPortal>
     </Dialog>
   );
 }
