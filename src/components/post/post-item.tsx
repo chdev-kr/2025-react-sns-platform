@@ -94,9 +94,9 @@ export default function PostItem({
             />
           </Link>
           <div>
-            <div className="font-bold hover:underline">
+            <Link to={`profile/${post.author_id}`} className="font-bold hover:underline">
               {post.author.nickname}
-            </div>
+            </Link>
             <div className="text-muted-foreground text-sm">
               {formatTimeAgo(post.created_at)}
             </div>
