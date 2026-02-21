@@ -32,9 +32,9 @@ export function extractYoutubeVideoId(url: string): string | null {
  * 중복된 VIDEO_ID 제거
  */
 export function extractAllYoutubeVideoIds(text: string): string[] {
-  // URL 패턴 (http/https로 시작하는 유튜브 관련 URL)
+  // URL 패턴 (http/https로 시작하는 유튜브 관련 URL, 쿼리 파라미터 포함)
   const urlPattern =
-    /https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)[a-zA-Z0-9_-]+/g;
+    /https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?[^\s]+|embed\/[^\s]+|shorts\/[^\s]+)|youtu\.be\/[^\s]+)/g;
 
   const urls = text.match(urlPattern);
   if (!urls || urls.length === 0) {
@@ -51,8 +51,9 @@ export function extractAllYoutubeVideoIds(text: string): string[] {
 
 // 텍스트에서 유튜브 URL 제거
 export function removeYoutubeUrls(text: string): string {
+  // 쿼리 파라미터 포함한 URL 패턴
   const urlPattern =
-    /https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)[a-zA-Z0-9_-]+/g;
+    /https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?[^\s]+|embed\/[^\s]+|shorts\/[^\s]+)|youtu\.be\/[^\s]+)/g;
 
   return text.replace(urlPattern, "").trim();
 }
