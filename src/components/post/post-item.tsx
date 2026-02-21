@@ -19,9 +19,14 @@ import Loader from "@/components/loader";
 import Fallback from "@/components/fallback";
 import LikePostButton from "@/components/post/like-post-button";
 import { Link } from "react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import ImageSkeleton from "@/components/post/image-skeleton";
 import { useOpenImageViewerModal } from "@/store/image-viewer-modal";
+import {
+  extractAllYoutubeVideoIds,
+  removeYoutubeUrls,
+} from "@/lib/youtube";
+import YoutubeEmbed from "@/components/post/youtube-embed";
 
 export default function PostItem({
   postId,
@@ -54,6 +59,19 @@ export default function PostItem({
       setCurrentImageIndex(api.selectedScrollSnap());
     });
   }, [api]);
+
+  const youtubeVideoIds = useMemo(
+    () => (post?.content ? extractAllYoutubeVideoIds(post.content) : []),
+    [post?.content],
+  );
+
+  const displayContent = useMemo(
+    () =>
+      post?.content && youtubeVideoIds.length > 0
+        ? removeYoutubeUrls(post.content)
+        : post?.content,
+    [post?.content, youtubeVideoIds],
+  );
 
   if (isPending) return <Loader />;
   if (error) return <Fallback />;
@@ -102,13 +120,21 @@ export default function PostItem({
         {type === "FEED" ? (
           <Link to={`/post/${post.id}`}>
             <div className="line-clamp-5 break-words whitespace-pre-wrap">
-              {post.content}
+              {displayContent}
             </div>
           </Link>
         ) : (
-          <div className="break-words whitespace-pre-wrap">{post.content}</div>
+          <div className="break-words whitespace-pre-wrap">{displayContent}</div>
         )}
-        {/* 2-2. 이미지 */}
+        {/* 2-2. 유튜브 임베드 */}
+        {youtubeVideoIds.length > 0 && (
+          <div className="flex flex-col gap-2">
+            {youtubeVideoIds.map((videoId) => (
+              <YoutubeEmbed key={videoId} videoId={videoId} />
+            ))}
+          </div>
+        )}
+        {/* 2-3. 이미지 */}
         {post.image_urls && post.image_urls.length === 1 ? (
           // 이미지 1개
           <div className="group relative mx-auto aspect-[6/5] w-full overflow-hidden rounded-xl">
